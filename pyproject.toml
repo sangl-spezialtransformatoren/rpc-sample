@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "rpc-sample"
+version = "0.1.0"
+description = ""
+authors = ["Adrian Schneider <adrian.schneider@sangl.com>"]
+readme = "README.md"
+packages = [{include = "rpc_sample"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+openrpc = "^8.4.1"
+redis = "^5.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
