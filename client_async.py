@@ -26,11 +26,12 @@ async def process_result(pubsub: PubSub):
 
 
 async def rpc(client: Redis, message: dict):
-    async with client.pubsub() as pubsub:
-        await pubsub.subscribe(message["id"])
-        future = asyncio.create_task(process_result(pubsub))
-        await client.lpush(RPC_ID, json.dumps(message))
-        return await future
+    await client.xadd(
+        name=RPC_ID,
+        fields={'data': json.dumps(message)}
+    )
+    response = await client.brpop(keys=[message["id"]])
+    return json.loads(response[1])["result"]
 
 
 async def main():
@@ -39,8 +40,8 @@ async def main():
     for _ in range(5):
         async def task():
             message_id = str(uuid4())
-            a = int(random()*10)
-            b = int(random()*10)
+            a = int(random() * 10)
+            b = int(random() * 10)
             message = {
                 "jsonrpc": "2.0",
                 "id": message_id,
